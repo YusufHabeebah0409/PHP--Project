@@ -20,7 +20,9 @@ if (isset($_POST['submit'])) {
 
         // header("Location: login.php");
        $connection = mysqli_connect('localhost', 'root','','blog_db');
-       
+       $query = "INSERT INTO `users`(`first_name`,`last_name`,`email`, `password`) VALUES ('$first','$last','$email','$password')";
+       mysqli_query($connection,$query);
+
     }
 }
 
