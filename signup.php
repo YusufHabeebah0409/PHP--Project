@@ -15,10 +15,12 @@ if (isset($_POST['submit'])) {
         $status = false;
     }else {
         // echo $first, $last, $email, $password;
-        $message = " Registration was successful";
-        $status = true;
+        // $message = " Registration was successful";
+        // $status = true;
 
-        header("Location: login.php");
+        // header("Location: login.php");
+       $connection = mysqli_connect('localhost', 'root','','blog_db');
+       
     }
 }
 
