@@ -1,5 +1,6 @@
 <?php
 require('navbar.php');
+session_start();
 $message = "";
 
 if(isset($_POST['login'])){
@@ -13,9 +14,13 @@ if(isset($_POST['login'])){
         $foundUsers = mysqli_query($connection, $query);
         if(mysqli_num_rows($foundUsers) > 0){
             $user = mysqli_fetch_assoc($foundUsers);
+
+            $_SESSION['loggedInUser'] = $user;
+
             $passwordCheck = password_verify($password, $user['password']);
             if($passwordCheck){
-                $message = "correct";
+                // $message = "correct";
+                header("location: dashboard.php");
             }else{
                 $message = "Incorrect password";
             }
