@@ -1,18 +1,24 @@
 <?php
 require('navbar.php');
-$message = "Fill all fields";
+$message = "";
 
 if(isset($_POST['login'])){
     $email = $_POST['email'];
     $password = $_POST['password'];
-    echo $email, $password;
+
     if(empty($email) || empty($password)){
         $message = "Fill all fields";
     }else{
         $query = "SELECT * FROM `users` WHERE email='$email'";
         $foundUsers = mysqli_query($connection, $query);
         if(mysqli_num_rows($foundUsers) > 0){
-            // password check 
+            $user = mysqli_fetch_assoc($foundUsers);
+            $passwordCheck = password_verify($password, $user['password']);
+            if($passwordCheck){
+                $message = "correct";
+            }else{
+                $message = "Incorrect password";
+            }
         }else{
             $message = "Your account does not exist";
         }
