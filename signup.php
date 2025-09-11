@@ -7,31 +7,27 @@ if (isset($_POST['submit'])) {
     $last = $_POST['lastName'];
     $email = $_POST['email'];
     $password = $_POST['password'];
+    $hashed = password_hash($password, PASSWORD_DEFAULT);
+
     if (empty($first) || empty($last) || empty($email) || empty($password)) {
         $message = "All fields are required" . '<br>';
         $status = false;
-    }elseif(strlen($password)<8){
+    } elseif (strlen($password) < 8) {
         $passwordMsg = " Password cannot be less than 8 characters";
         $status = false;
-    }else {
-        // echo $first, $last, $email, $password;
-        // $message = " Registration was successful";
-        // $status = true;
-
-        // header("Location: login.php");
-       $connection = mysqli_connect('localhost', 'root','','blog_db');
-       $query = "INSERT INTO `users`(`first_name`,`last_name`,`email`, `password`) VALUES ('$first','$last','$email','$password')";
-       $insert = mysqli_query($connection,$query);
-         if($insert){
-          header("Location: login.php");
-         }else{
-           $message = " Error Occured.... Try again";
-         }
-
+    } else {
+        $connection = mysqli_connect('localhost', 'root', '', 'blog_db');
+        $checkQuery = "SELECT * FROM `users` WHERE email='$email'";
+        $result = mysqli_query($connection, $checkQuery);
+        if ($result->num_rows > 0) {
+            $message = "Email already exists";
+        } else {
+            $query = "INSERT INTO `users`(`first_name`,`last_name`,`email`, `password`) VALUES ('$first','$last','$email','$hashed')";
+            mysqli_query($connection, $query);
+            header("Location: login.php");
+        }
     }
 }
-
-
 ?>
 
 
@@ -49,12 +45,12 @@ if (isset($_POST['submit'])) {
     <form action="signup.php" class="card col-6 mx-auto px-1 py-2 my-5" method="post">
         <h5 class="text-center my-2">Registration Form</h5>
         <?php
-        if(isset($_POST['submit']) && $status === true){
+        if (isset($_POST['submit']) && $status === true) {
             echo "<p class='text-center text-success'>$message</p>";
-        }else{
+        } else {
             echo "<p class='text-center text-danger'>$message</p>";
         }
-         
+
         ?>
         <div class="form-group mb-2">
             <label for=""> First Name</label>
