@@ -15,11 +15,12 @@ if(isset($_POST['login'])){
         if(mysqli_num_rows($foundUsers) > 0){
             $user = mysqli_fetch_assoc($foundUsers);
 
-            $_SESSION['loggedInUser'] = $user;
 
             $passwordCheck = password_verify($password, $user['password']);
             if($passwordCheck){
                 // $message = "correct";
+            $_SESSION['loggedInUser'] = $user;
+
                 header("location: dashboard.php");
             }else{
                 $message = "Incorrect password";
