@@ -9,8 +9,14 @@ if(!$user){
 
 
 if(isset($_POST['logout'])){
-    session_unset();
+    $_SESSION['loggedInUser'] = "";
+    // session_unset();
     header('location:login.php');
+
+}
+
+if(isset($_POST['create_post'])){
+   header('location: create_post.php');
 
 }
 
@@ -26,9 +32,16 @@ if(isset($_POST['logout'])){
     <title>Document</title>
 </head>
 <body>
-    <p>Welcome to the dashboard! <?php echo $user['first_name']; ?></p>
+    <p class="text-center">Welcome to the dashboard! <?php echo $user['first_name']; ?></p>
     <form action="dashboard.php" method="post">
         <button class="btn btn-danger" name="logout" type="submit">Log out</button>
     </form>
+
+    <form action="dashboard.php" method="post">
+        <button type="submit" name="create_post">Create post</button>
+    </form>
+
+
+
 </body>
 </html>
