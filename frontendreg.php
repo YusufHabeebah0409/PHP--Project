@@ -1,20 +1,22 @@
 <?php
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+require('config.php');
 
 $json = file_get_contents("php://input");
 
 $userDetails = json_decode($json);
+$first_name = $userDetails->firstName;
+$last_name = $userDetails->lastName;
+$email = $userDetails->email;
+$password = $userDetails->password;
 
-// echo json_encode([$userDetails]);
+$hashed = password_hash($password, PASSWORD_DEFAULT);
+$query = "INSERT INTO `users`(`first_name`, `last_name`, `email`, `password`) VALUES ('$first_name', '$last_name', '$email', '$hashed')";
+$result = mysqli_query($connection, $query);
 
-$first_name = $userDetails['firstName'];
-$last_name = $userDetails['lastName'];
-$email = $userDetails['email'];
-$hashed = password_hash($userDetails['password'], PASSWORD_DEFAULT);
-
-$query = "INSERT INTO `users`(`first_name`, `last_name`, `email`, `hashed`) VALUES ('$first_name', '$last_name', '$email', '$hashed')";
-
+if ($result) {
+    echo json_encode(['status' => true, 'message' => 'Account Created Successfully']);
+} else {
+    echo json_encode(['status' => false, 'message' => 'Error occurred while creating account. Please try again later']);
+}
 ?>
