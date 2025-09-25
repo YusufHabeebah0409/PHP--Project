@@ -20,15 +20,17 @@ if (mysqli_num_rows($result) > 0) {
     if (password_verify($password, $user['password'])) {
         $payLoad = [
             'user_id' => $user['user_id'],
+            'first_name' => $user['first_name'],
             'email' => $user['email'],
             'role' => 'user',
             'iat' => time(),
             'exp' => time() + 3600
         ];
-        $token = JWT:: encode($payLoad, $secretKey, 'HS256');
+        $token = JWT::encode($payLoad, $secretKey, 'HS256');
         $id = $user['user_id'];
-        $updateQuery = "UPDATE user SET token='$token' WHERE user_id=$id";
+        $updateQuery = "UPDATE users SET token='$token' WHERE user_id=$id";
         $check = mysqli_query($connection, $updateQuery);
+
         if($check){
         echo json_encode(['status' => true, 'message' => 'Login Successful', 'token' => $token]);
         }else{
