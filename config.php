@@ -1,9 +1,10 @@
 <?php
 require('vendor/autoload.php');
 use Cloudinary\Configuration\Configuration;
- $connection = mysqli_connect('localhost', 'root', '', 'blog_db');
 
- header("Access-Control-Allow-Origin: *");
+$connection = mysqli_connect('localhost', 'root', '', 'blog_db');
+
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
@@ -18,5 +19,12 @@ Configuration::instance([
     'url' => [
         'secure' => true
     ]
-])
+    ]);
+
+$host = "smtp.gmail.com";
+$username = "ojuolapehabeebah@gmail.com";
+$mail_password ="znmp ytne lfch cgph";
+
+$port = 587;
+
 ?>

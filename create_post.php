@@ -1,5 +1,8 @@
 <?php
 require('config.php');
+require('vendor/autoload.php');
+require('mail.php');
+
 use Cloudinary\Api\Upload\UploadApi;
 
 require('navbar.php');
@@ -28,19 +31,25 @@ if (isset($_POST['upload'])) {
     if (empty($title) || empty($content)) {
         $message = "post must have a title and content";
     } else {
-        if($_FILES['image']['tmp_name']){
+        if ($_FILES['image']['tmp_name']) {
             $result = (new UploadApi())->upload($_FILES['image']['tmp_name']);
             $image_url = $result['secure_url'];
-
         }
 
-        $query = "INSERT INTO `posts`(`title`, `subtitle`, `content`) VALUES('$title', '$subtitle', '$content')";
+        $query = "INSERT INTO `posts`(`title`, `subtitle`, `content`,`images`) VALUES('$title', '$subtitle', '$content', '$image_url')";
         $savePost = mysqli_query($connection, $query);
         if ($savePost) {
             $message = "Post Upload successfully";
             $_SESSION['post_title'] = "";
             $_SESSION['post_subtitle'] = "";
             $_SESSION['post_content'] = "";
+
+            if (!$mail->send()) {
+              echo 'Mailer Error: ' . $mail->ErrorInfo;
+            } else {
+            echo 'Message sent successfully';
+            }
+            
         } else {
             $message = "Error occurred While uploading post. Try Again";
         }
@@ -69,7 +78,9 @@ if (isset($_POST['upload'])) {
         echo "<p class='text-center text-danger'>$message</p>";
         ?>
 
-        <img src="<?php echo $image_url; ?>" alt="">
+
+        <img src="" alt="" id="uploaded_images" width="450px">
+
 
         <input type="text" name="title" class="form-control border border-0 fs-2 fw-semibold mb-2" placeholder="Title" value="<?php echo $title; ?>">
 
@@ -81,12 +92,24 @@ if (isset($_POST['upload'])) {
 
         <!-- <input type="file" name="image" class="form-control border border-0" placeholder="Upload an image" name="image[]" multiple>  -->
         <!-- <input type="file" name="image" class="form-control border border-0" placeholder="Upload an image" name="image" accept="*.png,.jpg,.jpeg"> -->
-        <input type="file" name="image" class="form-control border border-0" placeholder="Upload an image" name="image">
+        <input type="file" name="image" class="form-control border border-0" placeholder="Upload an image" name="image" onchange="handleFileUpload(event)">
 
 
 
 
     </form>
+
+    <script>
+        function handleFileUpload(event) {
+            // single images 
+            const image = event.target.files[0];
+            const url = URL.createObjectURL(image);
+            document.getElementById('uploaded_images').src = url;
+
+            // Multiple images 
+            // const images = event.target.files
+        }
+    </script>
 </body>
 
 </html>
